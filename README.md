@@ -1,4 +1,5 @@
-#BaiduExporter
+#BaiduExporter with YAAW page
+fork form https://github.com/acgotaku/BaiduExporter 添加了[YAAW](http://binux.github.io/yaaw/) 支持
 
 可以方便的把百度网盘的下载地址导出到aria2/aria2-rpc，支持YAAW。
 
