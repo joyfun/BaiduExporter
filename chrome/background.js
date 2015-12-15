@@ -48,16 +48,31 @@ var HttpSendRead = function(info) {
         }                          
     });
 };
-
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     if (changeInfo.status === 'loading' && tab.url.indexOf("n.baidu.com") != -1) {
-        if (!chrome.runtime.onConnect.hasListeners()) {
-            chrome.runtime.onConnect.addListener(function(port) {
+        if (!chrome.runtime.onConnectExternal.hasListeners()) {
+            chrome.runtime.onConnectExternal.addListener(function(port) {
                 console.assert(port.name == "BaiduExporter");
                 port.onMessage.addListener(function(request) {
                     console.log(request.method);
+                    console.log(request.data);
                     switch(request.method){
-                        case "get_cookie":
+                        case "rpc_data":
+                            HttpSendRead(request.data)
+                                    .done(function(json, textStatus, jqXHR) {
+                                        port.postMessage({'method':'rpc_result','status':true});
+
+                                    })
+                                    .fail(function(jqXHR, textStatus, errorThrown) {
+                                        port.postMessage({'method':'rpc_result','status':false});
+                                    }); 
+                            break;
+                        case "config_data":
+                            for(var key in request.data){
+                                localStorage.setItem(key,request.data[key]);
+                            }
+                            break;
+                        case "get_cookies":
                             Promise.all(function(){
                                 var array=[];
                                 var data=request.data;
@@ -67,33 +82,12 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
                                 return array;
                             }()).then(function(value){
                 
-                                port.postMessage(value);        
+                                port.postMessage({'method':'send_cookies','data':value});        
                                 
                             },function(){
                                 console.log("error");
                             });
-                            break;                
-                    }
-                });
-            });
-        }
-        if (!chrome.runtime.onConnectExternal.hasListeners()) {
-            chrome.runtime.onConnectExternal.addListener(function(port) {
-                console.assert(port.name == "BaiduExporter");
-                port.onMessage.addListener(function(request) {
-                    console.log(request.method);
-                    switch(request.method){
-                        case "rpc_data":
-
-                            HttpSendRead(request.data)
-                                    .done(function(json, textStatus, jqXHR) {
-                                        port.postMessage(["下载成功!赶紧去看看吧~", "MODE_SUCCESS"]);
-
-                                    })
-                                    .fail(function(jqXHR, textStatus, errorThrown) {
-                                        port.postMessage(["下载失败!是不是没有开启aria2?", "MODE_FAILURE"]);
-                                    }); 
-                        break;                 
+                            break; 
                     }
                 });
             });
@@ -101,7 +95,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 
     }
 });
-
+//获取系统的cookies 使用Promise异步处理
 function get_cookie(site,name){
     return new Promise(function(resolve, reject) {
         chrome.cookies.get({"url": site, "name": name}, function(cookies) {
@@ -115,19 +109,24 @@ function get_cookie(site,name){
         });
     });
 }
-
+//弹出chrome通知
+function showNotification(id,opt){
+    var notification = chrome.notifications.create(id,opt,function(notifyId){return notifyId});
+    setTimeout(function(){
+        chrome.notifications.clear(id,function(){});
+    },5000);
+}
+//软件版本更新提示
 var manifest = chrome.runtime.getManifest();
 var previousVersion=localStorage.getItem("version");
 if(previousVersion == "" || previousVersion != manifest.version){
     var opt={
         type: "basic",
         title: "更新",
-        message: "百度网盘助手更新到" +manifest.version + "版本啦～\n此次更新解决Win平台下载文件转义的BUG",
+        message: "百度网盘助手更新到" +manifest.version + "版本啦～\n此次更新支持用户配置同步功能~",
         iconUrl: "images/icon.jpg"
     }
-    var notification = chrome.notifications.create(status.toString(),opt,function(notifyId){return notifyId});
-    setTimeout(function(){
-        chrome.notifications.clear(status.toString(),function(){});
-    },5000);
+    var id= new Date().getTime().toString();              
+    showNotification(id,opt);
     localStorage.setItem("version",manifest.version);
 }

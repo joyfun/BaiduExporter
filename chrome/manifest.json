@@ -5,7 +5,8 @@
    },
    "content_scripts": [ {
       "js": [ "js/baidu.js" ],
-      "matches": ["*://pan.baidu.com/s/*", "*://yun.baidu.com/s/*", "*://pan.baidu.com/disk/home*", "*://yun.baidu.com/share/link*", "*://pan.baidu.com/share/link*", "*://yun.baidu.com/disk/home*"]
+      "css":["css/setting.css"],
+      "matches": ["*://pan.baidu.com/s/*", "*://yun.baidu.com/s/*", "*://pan.baidu.com/disk/home*", "*://yun.baidu.com/share/link*", "*://pan.baidu.com/share/link*", "*://yun.baidu.com/disk/home*", "*://pan.baidu.com/pcloud/album/info*", "*://yun.baidu.com/pcloud/album/info*"]
    } ],
    "default_locale": "en",
    "description": "__MSG_description__",
@@ -22,9 +23,17 @@
         "default_title": "CDHelper",      // 可选，在工具提示中显示
         "default_popup": "index.html"        // 可选
     },
+  "web_accessible_resources": [
+    "js/core.js",
+    "js/home.js",
+    "js/connect.js",
+    "js/share.js",
+    "js/convert.js",
+    "js/album.js"
+  ],
    "manifest_version": 2,
    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
-   "permissions": [ "cookies", "tabs", "*://*.baidu.com/*"],
+   "permissions": [ "cookies", "tabs", "notifications", "*://*.baidu.com/*", "activeTab", "contextMenus", "storage"],
    "name": "__MSG_appName__",
-   "version": "0.3.4"
+   "version": "0.5.7"
 }
