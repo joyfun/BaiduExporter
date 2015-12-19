@@ -22,6 +22,10 @@ Web Store link : https://chrome.google.com/webstore/detail/baiduexporter/mjaenbj
 
 Firefox
 
+商店安装:
+
+https://addons.mozilla.org/zh-CN/firefox/addon/baiduexporter/
+
 XPI包安装:
 
 https://raw.githubusercontent.com/acgotaku/BaiduExporter/master/firefox/BaiduExporter.xpi
