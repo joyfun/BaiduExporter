@@ -22,6 +22,7 @@ var HOME =function(){
             menu.on("click",".rpc_export_list",function(){
                 MODE="RPC";
                 RPC_PATH=$(this).attr("data-id");
+                console.log(RPC_PATH);
                 self.getSelectFile();
 
             });
@@ -190,3 +191,4 @@ var HOME =function(){
 setTimeout(function(){
     HOME.init();
 },600);
+
