@@ -12,21 +12,23 @@ var HOME =function(){
     //两种导出模式 RPC模式 和 TXT模式
     var MODE="RPC";
     var RPC_PATH="http://localhost:6800/jsonrpc";
-    var list = require("disk-system:widget/context/context.js").instanceForSystem.list;
+    var list = require("system-core:context/context.js").instanceForSystem.list;
     return {
         //绑定事件
         init:function(){
             var menu=CORE.addMenu.init("home");
             var self=this;
             CORE.requestCookies([{"site": "http://pan.baidu.com/", "name": "BDUSS"},{"site": "http://pcs.baidu.com/", "name": "BAIDUID"}]);
-            menu.on("click",".rpc_export_list",function(){
-                MODE="RPC";
-                RPC_PATH=$(this).attr("data-id");
-                console.log(RPC_PATH);
-                self.getSelectFile();
-
-            });
-            menu.on("click","#aria2_download",function(){
+            var rpcList = $(".rpc_export_list");
+            for (var i = rpcList.length - 1; i >= 0; i--) {
+                rpcList[i].addEventListener("click",function() {
+                    MODE="RPC";
+                    RPC_PATH=$(this).attr("data-id");
+                    console.log(RPC_PATH);
+                    self.getSelectFile();
+                });
+            }
+            $("#aria2_download")[0].addEventListener("click",function() {
                 MODE="TXT";
                 CORE.dataBox.init("home").show();
                 self.getSelectFile();
