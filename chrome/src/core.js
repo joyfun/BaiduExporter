@@ -1,6 +1,6 @@
 var CORE = (function() {
-    const version = "0.8.9";
-    const update_date = "2017/01/10";
+    const version = "0.9.5";
+    const update_date = "2017/03/05";
     const defaultUA = "netdisk;5.3.4.5;PC;PC-Windows;5.1.2600;WindowsBaiduYunGuanJia";
     const defaultreferer = "http://pan.baidu.com/disk/home";
     var cookies = null;
@@ -61,7 +61,7 @@ var CORE = (function() {
                 }
                 if (event.data.type && (event.data.type == "clear_data")) {
                     chrome.storage.sync.clear();
-                }
+                } 
             }, false);
         },
         sendToBackground: function(method, data, callback) {
@@ -186,6 +186,7 @@ var CORE = (function() {
                     '<table id="setting_div_table" >',
                     "<tbody>",
                     '<tr><td><label>开启配置同步:</label></td><td><input id="rpc_sync" type="checkbox"></td></tr>',
+                    '<tr><td><label>我是SVIP会员:</label></td><td><input id="svip" type="checkbox"></td></tr>',
                     '<tr><td><label>文件夹结构层数：</label></td><td><input type="text" id="rpc_fold" class="input-small">(默认0表示不保留,-1表示保留完整路径)</td></tr>',
                     '<tr><td><label>递归下载延迟：</label></td><td><input type="text" id="rpc_delay" class="input-small">(单位:毫秒)<div style="position:absolute; margin-top: -20px; right: 20px;"><a id="send_test" type="0" href="javascript:;" >测试连接，成功显示版本号。</a></div></td></tr>',
                     '<tr><td><label>下载路径:</label></td><td><input type="text" placeholder="只能设置为绝对路径" id="setting_aria2_dir" class="input-large"></td></tr>',
@@ -197,7 +198,7 @@ var CORE = (function() {
                     "</table>",
                     '<div style="margin-top:10px;">',
                     '<div id="copyright">© Copyright <a href="https://github.com/acgotaku/BaiduExporter">雪月秋水 </a><br/> Version:' + version + " 更新日期: " + update_date + " </div>",
-                    '<div style="margin-left:50px; display:inline-block"><a href="javascript:;" id="apply" class="button">应用</a><a href="javascript:;" id="reset" class="button">重置</a></div>',
+                    '<div style="margin-left:50px; display:inline-block"><a href="javascript:;" id="apply" class="button button-blue">应用</a><a href="javascript:;" id="reset" class="button">重置</a></div>',
                     "</div>",
                     "</div>"
                 ];
@@ -249,6 +250,7 @@ var CORE = (function() {
                 config_data["rpc_fold"] = $("#rpc_fold").val();
                 config_data["rpc_headers"] = $("#setting_aria2_headers").val();
                 config_data["rpc_sync"] = $("#rpc_sync").prop("checked");
+                config_data["svip"] =$("#svip").prop("checked");
                 var rpc_list = [];
                 for (var i = 0; i < $(".rpc_list").length; i++) {
                     var num = i + 1;
@@ -270,6 +272,16 @@ var CORE = (function() {
                 } else {
                     $("#rpc_sync").prop("checked", true);
                 }
+                var svip =localStorage.getItem("svip");
+                if (svip == null){
+                    svip = (yunData.is_svip == 0) ? "false" : "true";
+                }
+                if (svip == "true"){
+                    $("#svip").prop("checked", true);
+                } else {
+                    $("#svip").prop("checked", false);
+                }
+
                 $("#setting_aria2_dir").val(localStorage.getItem("rpc_dir"));
                 $("#setting_aria2_useragent_input").val(localStorage.getItem("UA") || defaultUA);
                 $("#setting_aria2_referer_input").val(localStorage.getItem("referer") || defaultreferer);
@@ -328,7 +340,7 @@ var CORE = (function() {
                 for (var key in cookies) {
                     format_cookies.push(key + "=" + cookies[key]);
                 }
-                addheader.push("Cookie: " + format_cookies.join(";"));
+                addheader.push("Cookie: " + format_cookies.join("; "));
             }
 
             var header = "";
@@ -453,7 +465,7 @@ var CORE = (function() {
                     var length = file_list.length;
                     for (var i = 0; i < length; i++) {
                         var filename = (navigator.platform.indexOf("Win") != -1) ? JSON.stringify(file_list[i].name) : CORE.escapeString(file_list[i].name);
-                        files.push("aria2c -c -s10 -k1M -x10 --enable-rpc=false -o " + filename + CORE.getHeader("aria2c_line") + " " + JSON.stringify(file_list[i].link) + "\n");
+                        files.push("aria2c -c -s10 -k1M -x16 --enable-rpc=false -o " + filename + CORE.getHeader("aria2c_line") + " " + JSON.stringify(file_list[i].link) + "\n");
                         aria2c_txt.push([
                             file_list[i].link,
                             CORE.getHeader("aria2c_txt"),
