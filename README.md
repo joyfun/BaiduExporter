@@ -2,7 +2,7 @@
 fork form https://github.com/acgotaku/BaiduExporter 添加了[YAAW](http://binux.github.io/yaaw/) 支持
 # BaiduExporter
 
-##因为要获取Cookies，无法单纯使用脚本实现，必须插件模式加载。
+## 因为要获取Cookies，无法单纯使用脚本实现，必须插件模式加载。
 
 可以方便的把百度网盘的下载地址导出到 aria2/aria2-rpc，支持 YAAW。
 
