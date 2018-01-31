@@ -5,8 +5,8 @@
   },
   "content_scripts": [
     {
-      "js": ["src/js/start.js" ],
-      "css": [ "release/css/style.css" ],
+      "js": ["js/start.js" ],
+      "css": [ "css/style.css" ],
       "matches": [ "*://pan.baidu.com/s/*", "*://yun.baidu.com/s/*", "*://pan.baidu.com/disk/home*", "*://yun.baidu.com/share/link*", "*://pan.baidu.com/share/link*", "*://yun.baidu.com/disk/home*", "*://pan.baidu.com/pcloud/album/*", "*://yun.baidu.com/pcloud/album/*" ],
       "run_at": "document_idle"
     }
@@ -14,20 +14,20 @@
   "default_locale": "en",
   "description": "__MSG_description__",
   "icons": {
-    "32": "src/img/logo32.png",
-    "16": "src/img/logo16.png",
-    "48": "src/img/logo48.png",
-    "128": "src/img/logo128.png"
+    "32": "img/logo32.png",
+    "16": "img/logo16.png",
+    "48": "img/logo48.png",
+    "128": "img/logo128.png"
   },
-    "browser_action": {
+  "browser_action": {
         "default_icon": {
-            "19": "src/img/logo32.png"
+            "19": "img/logo32.png"
         },
         "default_title": "Yaaw Page",      // 可选，在工具提示中显示
         "default_popup": "index.html"        // 可选
     },
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
-  "web_accessible_resources": [ "release/js/baidu.js" ],
+  "web_accessible_resources": [ "js/baidu.js","js/yaww.js" ],
   "manifest_version": 2,
   "permissions": [ "cookies", "notifications", "*://pan.baidu.com/", "*://yun.baidu.com/", "*://pcs.baidu.com/", "activeTab", "contextMenus", "storage" ],
   "name": "__MSG_appName__",
